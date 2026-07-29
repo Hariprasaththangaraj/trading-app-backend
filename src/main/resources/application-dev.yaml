@@ -1,0 +1,28 @@
+#application-dev.yaml
+spring:
+  application:
+    name: trading-app
+
+
+server:
+  servlet:
+    context-path:
+
+
+broker:
+  configs:
+    broker-name: aliceblue
+    app-key: UghxnLdnnd
+    user-id: AB047757
+    app-secret: cuQhh4tog1hnKUAilVuzcDloRhcGHIk9tszx42Smf0IeoGU4BJ0xZQoxj14NLJZNG7Q8PSQlaZjBjMU54hdhYoDRRaIK8zUCjtIj
+    redirect-url: http://localhost:8080/callback
+    auth-url: https://ant.aliceblueonline.com
+    base-url: https://a3.aliceblueonline.com
+
+
+#    ZERODHA:
+#      app-key: xxxx
+#      app-secret: xxxx
+#      redirect-url: http://localhost:8080/callback
+#      auth-url: https://kite.zerodha.com
+#      base-url: https://api.kite.trade

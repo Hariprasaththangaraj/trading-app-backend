@@ -1,0 +1,12 @@
+#application.yaml
+
+spring:
+  application:
+    name: trading-app
+
+  profiles:
+    active: dev
+
+server:
+  servlet:
+    context-path: /api
