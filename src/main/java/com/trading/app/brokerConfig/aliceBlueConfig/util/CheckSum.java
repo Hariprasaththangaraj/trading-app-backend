@@ -4,15 +4,13 @@ import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 @Component
 public class CheckSum {
 
-    public String getAuthToken(
+    public String getCheckSum(
             String userId,
             String authCode,
             String secret) {
-
         try {
 
             String data = userId + authCode + secret;
