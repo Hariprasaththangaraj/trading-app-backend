@@ -28,7 +28,7 @@ public class AliceBlueController {
     @GetMapping("/callback")
     public RedirectView callback(@RequestParam("authCode") String authCode) {
         System.out.println("AUTH CODE = " + authCode);
-        String checkSumValue = aliceBlueService.generateCheckSum(authCode);
+        String checkSumValue = aliceBlueService.generateAuthToken(authCode);
         if (checkSumValue != null) {
             return new RedirectView(
                     Constant.REDIRECT_FRONTENT);

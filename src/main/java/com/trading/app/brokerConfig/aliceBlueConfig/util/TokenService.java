@@ -16,7 +16,7 @@ public class TokenService {
         this.restTemplate = restTemplate;
     }
 
-    public VendorLoginResponse getSession(String checksum) {
+    public String getSession(String checksum) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -42,8 +42,8 @@ public class TokenService {
                         VendorLoginResponse.class
                 );
 
-
-        return response.getBody();
+        System.out.print("Auth Token : " + response.getBody().getUserSession());
+        return response.getBody().getUserSession();
 
     }
 }
