@@ -4,6 +4,7 @@ import com.trading.app.brokerConfig.BrokerConfig;
 import com.trading.app.brokerConfig.aliceBlueConfig.service.AliceBlueService;
 import com.trading.app.brokerConfig.aliceBlueConfig.util.CheckSum;
 import com.trading.app.brokerConfig.aliceBlueConfig.util.TokenService;
+import com.trading.app.brokerConfig.aliceBlueConfig.websocket.AliceBlueWebSocket;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,12 +18,15 @@ public class AliceBlueServiceImpl implements AliceBlueService {
 
     private final AliceBlueSessionStore aliceBlueSessionStore;
 
+    private final AliceBlueWebSocket webSocket;
 
-    public AliceBlueServiceImpl(BrokerConfig brokerConfig, CheckSum checkSum, TokenService tokenService, AliceBlueSessionStore aliceBlueSessionStore) {
+
+    public AliceBlueServiceImpl(BrokerConfig brokerConfig, CheckSum checkSum, TokenService tokenService, AliceBlueSessionStore aliceBlueSessionStore, AliceBlueWebSocket webSocket) {
         this.brokerConfig = brokerConfig;
         this.checkSum = checkSum;
         this.tokenService = tokenService;
         this.aliceBlueSessionStore = aliceBlueSessionStore;
+        this.webSocket = webSocket;
     }
 
     public String getLoginUrl() {
@@ -37,8 +41,12 @@ public class AliceBlueServiceImpl implements AliceBlueService {
         System.out.println("Check Sum : " + checkSumToken);
         //Inserting Checksum and getting Session Token
         String sessionToken = tokenService.getSession(checkSumToken);
-//        // Store globally inside Spring application
+        // Store globally inside Spring application
         aliceBlueSessionStore.setSessionToken(sessionToken);
+        //Triggering WebSocket
+        if (aliceBlueSessionStore.getSessionToken() != null) {
+            webSocket.getInvalidateExistingWebSocket();
+        }
         return sessionToken;
     }
 }
