@@ -9,19 +9,14 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AliceBlueServiceImpl implements AliceBlueService {
-
     private final BrokerConfig brokerConfig;
-
     private final CheckSum checkSum;
-
     private final TokenService tokenService;
-
     private final AliceBlueSessionStore aliceBlueSessionStore;
-
     private final AliceBlueWebSocket webSocket;
 
-
-    public AliceBlueServiceImpl(BrokerConfig brokerConfig, CheckSum checkSum, TokenService tokenService, AliceBlueSessionStore aliceBlueSessionStore, AliceBlueWebSocket webSocket) {
+    public AliceBlueServiceImpl(BrokerConfig brokerConfig, CheckSum checkSum, TokenService tokenService,
+            AliceBlueSessionStore aliceBlueSessionStore, AliceBlueWebSocket webSocket) {
         this.brokerConfig = brokerConfig;
         this.checkSum = checkSum;
         this.tokenService = tokenService;
@@ -30,9 +25,7 @@ public class AliceBlueServiceImpl implements AliceBlueService {
     }
 
     public String getLoginUrl() {
-        return brokerConfig.getAuthUrl()
-                + "/?appcode="
-                + brokerConfig.getAppKey();
+        return brokerConfig.getAuthUrl() + "/?appcode=" + brokerConfig.getAppKey();
     }
 
     //Inserting Checksum and getting Session Token
@@ -44,7 +37,7 @@ public class AliceBlueServiceImpl implements AliceBlueService {
         // Store globally inside Spring application
         aliceBlueSessionStore.setSessionToken(sessionToken);
         //Triggering WebSocket
-        if (aliceBlueSessionStore.getSessionToken() != null) {
+        if (aliceBlueSessionStore.getSessionToken()!=null) {
             webSocket.getInvalidateExistingWebSocket();
         }
         return sessionToken;

@@ -4,6 +4,7 @@ package com.trading.app.brokerConfig.aliceBlueConfig.websocket.model;
 
     private String susertoken;
     private String t;
+     private String s;
     private String actid;
     private String uid;
     private String source;
@@ -46,5 +47,13 @@ package com.trading.app.brokerConfig.aliceBlueConfig.websocket.model;
 
      public void setSource(String source) {
          this.source = source;
+     }
+
+     public String getS() {
+         return s;
+     }
+
+     public void setS(String s) {
+         this.s = s;
      }
  }
