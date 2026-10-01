@@ -113,38 +113,97 @@ public class AliceBlueWebSocket {
             }
         }
 
-        // Here we need to send our payload
+        // This method is called automatically whenever a text message
+        // is received from the AliceBlue WebSocket server.
         @Override
         protected void handleTextMessage(WebSocketSession session, TextMessage message) {
+            // Get the actual JSON response received from AliceBlue.
             String response = message.getPayload();
             System.out.println("AliceBlue Response = " + response);
             try {
-                // First identify message type
+                // Parse the received JSON response so that we can
+                // read individual fields such as "t", "s", "tk", etc.
                 JsonNode jsonNode = jsonValue.readTree(response);
+                // First identify the message type.
+                //
+                // AliceBlue sends different types of WebSocket messages.
+                // The "t" field tells us what kind of message we received.
+                //
+                // Examples:
+                // "ck" = Authentication / connection response
+                // "dk" = Initial depth acknowledgement/response
+                // "df" = Live depth feed
                 String type = jsonNode.get("t").asText();
-                // Authentication response
+                // =========================================================
+                // 1. AUTHENTICATION RESPONSE
+                // =========================================================
+                //
+                // "ck" means that AliceBlue is responding to our
+                // WebSocket authentication/connection request.
+                //
+                // We check this first because we should subscribe to
+                // market data only after authentication is successful.
                 if ("ck".equals(type)) {
+                    // Convert the JSON authentication response into
+                    // our Java WebSocketConnectionRequest object.
                     WebSocketConnectionRequest wsResponse = jsonValue.readValue(response, WebSocketConnectionRequest.class);
+                    // Check whether AliceBlue authentication was successful.
+                    //
+                    // "OK" means authentication was successful.
+                    // Only after this do we start our market-data subscription.
                     if ("OK".equals(wsResponse.getS())) {
                         System.out.println(">>> Authentication SUCCESS");
+                        // Authentication is complete.
+                        // Now send our market-data subscription payload(s)
+                        // to AliceBlue through the same WebSocket session.
                         subscribeDepth(session);
                     }
                 }
-                // Initial depth response
+                // =========================================================
+                // 2. INITIAL DEPTH RESPONSE
+                // =========================================================
+                //
+                // "dk" indicates the initial response/acknowledgement
+                // related to our depth subscription.
+                //
+                // This tells us that AliceBlue has responded to our
+                // market-depth subscription request.
                 else if ("dk".equals(type)) {
+                    // Convert the JSON depth response into our
+                    // MarketDepthResponse Java object.
                     MarketDepthResponse depthResponse = jsonValue.readValue(response, MarketDepthResponse.class);
                     System.out.println(">>> Market Depth Acknowledgement");
+                    // Display the Last Traded Price received from AliceBlue.
                     System.out.println("LTP : " + depthResponse.getLastTradedPrice());
+                    // Display the instrument token so that we know
+                    // which instrument this depth response belongs to.
                     System.out.println("Token : " + depthResponse.getToken());
                 }
-                // Live depth feed
+                // =========================================================
+                // 3. LIVE DEPTH FEED
+                // =========================================================
+                //
+                // "df" indicates that this is a live market-depth update.
+                //
+                // After subscription, AliceBlue continuously sends
+                // updated market data through the WebSocket.
+                //
+                // Every time a new depth update arrives,
+                // this block will be executed.
                 else if ("df".equals(type)) {
+                    // Convert the live JSON depth-feed response into
+                    // our MarketDepthResponse Java object.
                     MarketDepthResponse depthResponse = jsonValue.readValue(response, MarketDepthResponse.class);
                     System.out.println(">>> Market Depth Feed");
+                    // Display the latest traded price from the live feed.
                     System.out.println("LTP : " + depthResponse.getLastTradedPrice());
+                    // Display the token to identify which instrument
+                    // generated this live depth update.
                     System.out.println("Token : " + depthResponse.getToken());
                 }
             } catch (Exception e) {
+                // If JSON parsing, object conversion, or any other
+                // message-processing operation fails, we come here.
                 System.out.println("Error processing AliceBlue WebSocket response");
                 e.printStackTrace();
             }
@@ -169,10 +228,23 @@ public class AliceBlueWebSocket {
     private void subscribeDepth(WebSocketSession session) {
         try {
             ClassPathResource resource = new ClassPathResource("subscriptions/subscription.json");
+            // Read the JSON file content
             String payload = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-            System.out.println("Sending Subscription: " + payload);
-            session.sendMessage(new TextMessage(payload));
-            System.out.println(">>> Subscription Sent Successfully");
+
+            // Convert the JSON file into a JSON Array
+            JsonNode root = jsonValue.readTree(payload);
+
+            // Each element represents one subscription payload
+            for (JsonNode payloadNode : root) {
+                // Convert one JSON object into a JSON string
+                String payloads = payloadNode.toString();
+                System.out.println("Sending Subscription: " + payloads);
+                // Send this subscription as a separate
+                // WebSocket text message
+                TextMessage message = new TextMessage(payloads);
+                session.sendMessage(message);
+            }
+            System.out.println(">>> All Subscriptions Sent Successfully");
         } catch (Exception e) {
             e.printStackTrace();
         }
