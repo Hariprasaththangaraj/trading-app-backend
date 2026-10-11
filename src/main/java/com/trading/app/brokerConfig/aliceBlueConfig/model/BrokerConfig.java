@@ -1,4 +1,4 @@
-package com.trading.app.brokerConfig;
+package com.trading.app.brokerConfig.aliceBlueConfig.model;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -13,6 +13,24 @@ public class BrokerConfig {
     private String redirectUrl;
     private String authUrl;
     private String baseUrl;
+    private String brokerName;
+    private String appId;
+
+    public String getAppId() {
+        return appId;
+    }
+
+    public void setAppId(String appId) {
+        this.appId = appId;
+    }
+
+    public String getBrokerName() {
+        return brokerName;
+    }
+
+    public void setBrokerName(String brokerName) {
+        this.brokerName = brokerName;
+    }
 
     public String getAppKey() {
         return appKey;

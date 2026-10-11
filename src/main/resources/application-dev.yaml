@@ -21,16 +21,11 @@ server:
   servlet:
     context-path:
 
-broker:
-  configs:
-    broker-name: aliceblue
-    app-key: ${ALICEBLUE_APP_KEY}
-    user-id: ${ALICEBLUE_USER_ID}
-    app-secret: ${ALICEBLUE_APP_SECRET}
-    redirect-url: http://localhost:8080/callback
-    auth-url: https://ant.aliceblueonline.com
-    base-url: https://a3.aliceblueonline.com
 
 jwt:
   secret: io/lFrD2JmpTG7Wzj7ELBuVVCC+RRBaCEPo43fY7gmc=
   expiration: 86400000
+
+  logging:
+    level:
+      org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping: TRACE

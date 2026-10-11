@@ -51,34 +51,6 @@ public class AliceBlueController {
     }
 
 
-    /**
-     * Starts the AliceBlue login process.
-     *
-     * <p>
-     * The frontend calls this endpoint when the user wants to
-     * authenticate with AliceBlue.
-     *
-     * <p>
-     * The controller delegates the actual URL generation to
-     * AliceBlueService and returns the generated login URL.
-     *
-     * <p>
-     * Example:
-     *
-     * <pre>
-     * GET http://localhost:8080/auth/login
-     * </pre>
-     *
-     * @return AliceBlue login URL
-     */
-    @CrossOrigin
-    @GetMapping("/auth/login")
-    public String login() {
-
-        // Generate and return the AliceBlue authentication URL.
-        return aliceBlueService.getLoginUrl();
-    }
-
 
     /**
      * Handles the callback request sent by AliceBlue after

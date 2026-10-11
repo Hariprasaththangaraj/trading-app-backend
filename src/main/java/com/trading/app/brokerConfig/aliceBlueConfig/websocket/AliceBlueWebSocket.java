@@ -1,6 +1,6 @@
 package com.trading.app.brokerConfig.aliceBlueConfig.websocket;
 
-import com.trading.app.brokerConfig.BrokerConfig;
+import com.trading.app.brokerConfig.aliceBlueConfig.model.BrokerConfig;
 import com.trading.app.brokerConfig.aliceBlueConfig.service.impl.AliceBlueSessionStore;
 import com.trading.app.brokerConfig.aliceBlueConfig.util.CheckSum;
 import com.trading.app.brokerConfig.aliceBlueConfig.util.Constant;

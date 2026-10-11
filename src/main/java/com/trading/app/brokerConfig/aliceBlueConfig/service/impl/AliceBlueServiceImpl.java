@@ -1,10 +1,12 @@
 package com.trading.app.brokerConfig.aliceBlueConfig.service.impl;
 
-import com.trading.app.brokerConfig.BrokerConfig;
+import com.trading.app.brokerConfig.aliceBlueConfig.model.BorkerConfigRequest;
+import com.trading.app.brokerConfig.aliceBlueConfig.model.BrokerConfig;
 import com.trading.app.brokerConfig.aliceBlueConfig.service.AliceBlueService;
 import com.trading.app.brokerConfig.aliceBlueConfig.util.CheckSum;
 import com.trading.app.brokerConfig.aliceBlueConfig.util.TokenService;
 import com.trading.app.brokerConfig.aliceBlueConfig.websocket.AliceBlueWebSocket;
+import com.trading.app.common.Constant;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,8 +26,23 @@ public class AliceBlueServiceImpl implements AliceBlueService {
         this.webSocket = webSocket;
     }
 
-    public String getLoginUrl() {
-        return brokerConfig.getAuthUrl() + "/?appcode=" + brokerConfig.getAppKey();
+    public String getLoginUrl(BorkerConfigRequest borkerConfigRequest) throws Exception {
+
+        if (borkerConfigRequest == null
+                || borkerConfigRequest.getBrokerName() == null
+                || borkerConfigRequest.getBrokerName().isBlank()
+                || borkerConfigRequest.getAppKey() == null
+                || borkerConfigRequest.getAppKey().isBlank()
+                || borkerConfigRequest.getAppSecret() == null
+                || borkerConfigRequest.getAppSecret().isBlank()) {
+
+            throw new IllegalArgumentException(
+                    "Broker Name, App Key and API Secret are required"
+            );
+        }
+
+
+        return Constant.AUTH_URL.toString() + "/?appcode=" + borkerConfigRequest.getAppKey();
     }
 
     //Inserting Checksum and getting Session Token
