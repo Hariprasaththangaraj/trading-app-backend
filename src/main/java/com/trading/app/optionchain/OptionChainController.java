@@ -1,6 +1,6 @@
 package com.trading.app.optionchain;
 
-import com.trading.app.brokerConfig.aliceBlueConfig.service.AliceBlueService;
+import com.trading.app.brokerConfig.service.AliceBlueService;
 import com.trading.app.optionchain.model.OptionChain;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

@@ -1,0 +1,16 @@
+USE dhandb;
+
+CREATE TABLE IF NOT EXISTS broker_config (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    broker_name VARCHAR(50) NOT NULL,
+    client_id VARCHAR(100) NOT NULL,
+    app_key VARCHAR(255) NOT NULL,
+    app_secret TEXT NOT NULL,
+    app_id VARCHAR(255) DEFAULT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE KEY uk_broker_client (broker_name, client_id)
+) ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4;

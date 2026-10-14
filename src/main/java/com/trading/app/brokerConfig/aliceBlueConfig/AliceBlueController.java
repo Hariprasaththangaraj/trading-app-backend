@@ -1,8 +1,7 @@
 package com.trading.app.brokerConfig.aliceBlueConfig;
 
-import com.trading.app.brokerConfig.aliceBlueConfig.service.AliceBlueService;
-import com.trading.app.brokerConfig.aliceBlueConfig.util.Constant;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import com.trading.app.brokerConfig.service.AliceBlueService;
+import com.trading.app.brokerConfig.util.Constant;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,7 +29,6 @@ import org.springframework.web.servlet.view.RedirectView;
  */
 @RestController
 public class AliceBlueController {
-
     /*
      * Service responsible for handling AliceBlue authentication
      * and broker-related business logic.
@@ -40,7 +38,6 @@ public class AliceBlueController {
      */
     private final AliceBlueService aliceBlueService;
 
-
     /**
      * Creates the AliceBlueController.
      *
@@ -49,8 +46,6 @@ public class AliceBlueController {
     public AliceBlueController(AliceBlueService aliceBlueService) {
         this.aliceBlueService = aliceBlueService;
     }
-
-
 
     /**
      * Handles the callback request sent by AliceBlue after
@@ -76,8 +71,7 @@ public class AliceBlueController {
      * @return redirect response to the frontend after authentication
      */
     @GetMapping("/callback")
-    public RedirectView callback(@RequestParam("authCode") String authCode) {
-
+    public RedirectView callback(@RequestParam("authCode") String authCode) throws Exception {
         // Print the received authentication code for debugging.
         // TODO: Remove this log before production because authCode
         // is a sensitive authentication value.
@@ -95,19 +89,14 @@ public class AliceBlueController {
          * If token generation is successful,
          * redirect the user back to the frontend application.
          */
-        if (checkSumValue != null) {
-
-            return new RedirectView(
-                    Constant.REDIRECT_FRONTENT
-            );
+        if (checkSumValue!=null) {
+            return new RedirectView(Constant.REDIRECT_FRONTENT);
         }
 
 
         /*
          * If token generation fails, return an error message.
          */
-        return new RedirectView(
-                "Failed Checksum Generation"
-        );
+        return new RedirectView("Failed Checksum Generation");
     }
 }

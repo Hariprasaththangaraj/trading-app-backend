@@ -2,7 +2,7 @@ package com.trading.app.login;
 
 import com.trading.app.login.model.SignupRequest;
 import com.trading.app.login.model.SignupResponse;
-import com.trading.app.login.service.AuthService;
+import com.trading.app.security.config.AuthService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

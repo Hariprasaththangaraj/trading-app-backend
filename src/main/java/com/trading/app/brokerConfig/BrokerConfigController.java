@@ -1,7 +1,7 @@
 package com.trading.app.brokerConfig;
 
-import com.trading.app.brokerConfig.aliceBlueConfig.model.BorkerConfigRequest;
-import com.trading.app.brokerConfig.aliceBlueConfig.service.AliceBlueService;
+import com.trading.app.brokerConfig.model.BorkerConfigRequest;
+import com.trading.app.brokerConfig.service.AliceBlueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,9 +13,13 @@ public class BrokerConfigController {
     AliceBlueService aliceBlueService ;
 
 
-    @CrossOrigin
     @PostMapping("/connection")
     public String getLoginDetails(@RequestBody BorkerConfigRequest borkerConfigRequest) throws Exception {
         return aliceBlueService.brokerConnection(borkerConfigRequest);
+    }
+
+    @PostMapping("/save")
+    public String saveDetails(@RequestBody BorkerConfigRequest borkerConfigRequest){
+        return aliceBlueService.saveDetails(borkerConfigRequest);
     }
 }
