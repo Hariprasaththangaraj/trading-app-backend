@@ -71,7 +71,7 @@ public class AliceBlueController {
      * @return redirect response to the frontend after authentication
      */
     @GetMapping("/callback")
-    public RedirectView callback(@RequestParam("userId") String userId, @RequestParam("authCode") String authCode) throws Exception {
+    public RedirectView callback(@RequestParam("userId") String userId, @RequestParam("authCode") String authCode,   @RequestParam("appcode") String appCode) throws Exception {
         /*
          * Generate the AliceBlue authentication/session token
          * using the authCode received from the broker.

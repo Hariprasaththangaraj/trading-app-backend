@@ -37,7 +37,14 @@ public class AliceBlueServiceImpl implements AliceBlueService {
     }
 
     public String brokerConnection(BorkerConfigRequest borkerConfigRequest) throws Exception {
-        if (borkerConfigRequest==null || borkerConfigRequest.getBrokerName()==null || borkerConfigRequest.getBrokerName().isBlank() || borkerConfigRequest.getAppKey()==null || borkerConfigRequest.getAppKey().isBlank() || borkerConfigRequest.getAppSecret()==null || borkerConfigRequest.getAppSecret().isBlank() || borkerConfigRequest.getUserId()==null) {
+        if (borkerConfigRequest==null
+                || borkerConfigRequest.getBrokerName()==null
+                || borkerConfigRequest.getBrokerName().isBlank()
+                || borkerConfigRequest.getAppKey()==null
+                || borkerConfigRequest.getAppKey().isBlank()
+                || borkerConfigRequest.getAppSecret()==null
+                || borkerConfigRequest.getAppSecret().isBlank()
+                || borkerConfigRequest.getUserId()==null) {
             throw new IllegalArgumentException("Broker Name, App Key and API Secret are required");
         }
         return "https://ant.aliceblueonline.com/?appcode=" + UriUtils.encodeQueryParam(borkerConfigRequest.getAppKey(), StandardCharsets.UTF_8);
