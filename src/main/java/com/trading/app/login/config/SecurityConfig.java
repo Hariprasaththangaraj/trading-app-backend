@@ -31,6 +31,11 @@ public class SecurityConfig {
             HttpSecurity http
     ) throws Exception {
 
+        http.cors(
+                org.springframework.security.config.Customizer.withDefaults()
+        );
+
+
         JwtAuthenticationFilter jwtFilter =
                 new JwtAuthenticationFilter(jwtService);
 

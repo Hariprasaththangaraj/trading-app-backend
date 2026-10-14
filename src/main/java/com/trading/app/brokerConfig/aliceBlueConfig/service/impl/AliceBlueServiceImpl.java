@@ -8,6 +8,9 @@ import com.trading.app.brokerConfig.aliceBlueConfig.util.TokenService;
 import com.trading.app.brokerConfig.aliceBlueConfig.websocket.AliceBlueWebSocket;
 import com.trading.app.common.Constant;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriUtils;
+
+import java.nio.charset.StandardCharsets;
 
 @Service
 public class AliceBlueServiceImpl implements AliceBlueService {
@@ -26,23 +29,40 @@ public class AliceBlueServiceImpl implements AliceBlueService {
         this.webSocket = webSocket;
     }
 
-    public String getLoginUrl(BorkerConfigRequest borkerConfigRequest) throws Exception {
-
-        if (borkerConfigRequest == null
-                || borkerConfigRequest.getBrokerName() == null
+    public String brokerConnection(BorkerConfigRequest borkerConfigRequest) throws Exception {
+        if (borkerConfigRequest==null
+                || borkerConfigRequest.getBrokerName()==null
                 || borkerConfigRequest.getBrokerName().isBlank()
-                || borkerConfigRequest.getAppKey() == null
+                || borkerConfigRequest.getAppKey()==null
                 || borkerConfigRequest.getAppKey().isBlank()
-                || borkerConfigRequest.getAppSecret() == null
-                || borkerConfigRequest.getAppSecret().isBlank()) {
+                || borkerConfigRequest.getAppSecret()==null
+                || borkerConfigRequest.getAppSecret().isBlank()
+                || borkerConfigRequest.getUserId()==null) {
 
             throw new IllegalArgumentException(
                     "Broker Name, App Key and API Secret are required"
             );
         }
 
+        String loginUrl =
+                "https://ant.aliceblueonline.com/?appcode="
+                        + UriUtils.encodeQueryParam(
+                        borkerConfigRequest.getAppKey(), StandardCharsets.UTF_8);
 
-        return Constant.AUTH_URL.toString() + "/?appcode=" + borkerConfigRequest.getAppKey();
+
+
+        String checkSumToken = checkSum.getCheckSum(borkerConfigRequest.getUserId(),
+                borkerConfigRequest.getAppKey(),
+                borkerConfigRequest.getAppSecret());
+
+        String sessionToken = tokenService.getSession(checkSumToken);
+        // Store globally inside Spring application
+        aliceBlueSessionStore.setSessionToken(sessionToken);
+        //Triggering WebSocket
+        if (aliceBlueSessionStore.getSessionToken()!=null) {
+            webSocket.getInvalidateExistingWebSocket();
+        }
+        return sessionToken;
     }
 
     //Inserting Checksum and getting Session Token

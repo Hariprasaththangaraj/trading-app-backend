@@ -8,6 +8,16 @@ public class VendorLoginResponse {
 
     private String userSession;
 
+    private String emsg;
+
+    public String getEmsg() {
+        return emsg;
+    }
+
+    public void setEmsg(String emsg) {
+        this.emsg = emsg;
+    }
+
     public String getStat() {
         return stat;
     }

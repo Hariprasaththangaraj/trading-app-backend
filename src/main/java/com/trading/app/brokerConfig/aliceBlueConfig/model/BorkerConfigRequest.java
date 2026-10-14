@@ -5,6 +5,7 @@ public class BorkerConfigRequest {
     private String appId;
     private String appSecret;
     private String appKey;
+    private String userId;
 
     public String getBrokerName() {
         return brokerName;
@@ -36,5 +37,13 @@ public class BorkerConfigRequest {
 
     public void setAppKey(String appKey) {
         this.appKey = appKey;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }
