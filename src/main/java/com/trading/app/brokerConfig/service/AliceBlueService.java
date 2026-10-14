@@ -8,4 +8,6 @@ public interface AliceBlueService {
     String saveDetails(BorkerConfigRequest borkerConfigRequest);
 
     String generateAuthToken(String userId, String authCode) throws Exception;
+
+    BorkerConfigRequest getBrokerDetails(Long userId, String brokerName);
 }

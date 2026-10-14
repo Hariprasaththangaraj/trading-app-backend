@@ -8,10 +8,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/brokerConfig")
 public class BrokerConfigController {
-
     @Autowired
-    AliceBlueService aliceBlueService ;
-
+    AliceBlueService aliceBlueService;
 
     @PostMapping("/connection")
     public String getLoginDetails(@RequestBody BorkerConfigRequest borkerConfigRequest) throws Exception {
@@ -19,7 +17,13 @@ public class BrokerConfigController {
     }
 
     @PostMapping("/save")
-    public String saveDetails(@RequestBody BorkerConfigRequest borkerConfigRequest){
+    public String saveDetails(@RequestBody BorkerConfigRequest borkerConfigRequest) {
         return aliceBlueService.saveDetails(borkerConfigRequest);
+    }
+
+    @GetMapping("/getBrokerDetails")
+    public BorkerConfigRequest getBrokerDetails(@RequestParam("userId") Long userId,
+            @RequestParam("brokerName") String brokerName) {
+        return aliceBlueService.getBrokerDetails(userId, brokerName);
     }
 }

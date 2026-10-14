@@ -24,6 +24,16 @@ public class BrokerConfigDTO {
     private LocalDateTime createdAt;
     @Column(name = "updated_at", insertable = false, updatable = false)
     private LocalDateTime updatedAt;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 
     public BrokerConfigDTO() {
     }

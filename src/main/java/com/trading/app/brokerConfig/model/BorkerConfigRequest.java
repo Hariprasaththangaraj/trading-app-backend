@@ -1,11 +1,21 @@
 package com.trading.app.brokerConfig.model;
 
 public class BorkerConfigRequest {
+
     private String brokerName;
     private String appId;
     private String appSecret;
     private String appKey;
-    private String userId;
+    private String clientId;
+    private Long userId;
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 
     public String getBrokerName() {
         return brokerName;
@@ -39,11 +49,11 @@ public class BorkerConfigRequest {
         this.appKey = appKey;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getClientId() {
+        return clientId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
     }
 }

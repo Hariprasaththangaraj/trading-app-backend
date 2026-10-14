@@ -8,10 +8,11 @@ import com.trading.app.brokerConfig.service.AliceBlueService;
 import com.trading.app.brokerConfig.util.CheckSum;
 import com.trading.app.brokerConfig.util.TokenService;
 import com.trading.app.brokerConfig.websocket.AliceBlueWebSocket;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriUtils;
 
 import java.nio.charset.StandardCharsets;
@@ -23,7 +24,6 @@ public class AliceBlueServiceImpl implements AliceBlueService {
     private final TokenService tokenService;
     private final AliceBlueSessionStore aliceBlueSessionStore;
     private final AliceBlueWebSocket webSocket;
-
     @Autowired
     private BrokerRepo brokerRepo;
 
@@ -37,14 +37,7 @@ public class AliceBlueServiceImpl implements AliceBlueService {
     }
 
     public String brokerConnection(BorkerConfigRequest borkerConfigRequest) throws Exception {
-        if (borkerConfigRequest==null
-                || borkerConfigRequest.getBrokerName()==null
-                || borkerConfigRequest.getBrokerName().isBlank()
-                || borkerConfigRequest.getAppKey()==null
-                || borkerConfigRequest.getAppKey().isBlank()
-                || borkerConfigRequest.getAppSecret()==null
-                || borkerConfigRequest.getAppSecret().isBlank()
-                || borkerConfigRequest.getUserId()==null) {
+        if (borkerConfigRequest==null || borkerConfigRequest.getBrokerName()==null || borkerConfigRequest.getBrokerName().isBlank() || borkerConfigRequest.getAppKey()==null || borkerConfigRequest.getAppKey().isBlank() || borkerConfigRequest.getAppSecret()==null || borkerConfigRequest.getAppSecret().isBlank() || borkerConfigRequest.getClientId()==null) {
             throw new IllegalArgumentException("Broker Name, App Key and API Secret are required");
         }
         return "https://ant.aliceblueonline.com/?appcode=" + UriUtils.encodeQueryParam(borkerConfigRequest.getAppKey(), StandardCharsets.UTF_8);
@@ -55,9 +48,7 @@ public class AliceBlueServiceImpl implements AliceBlueService {
     }
 
     //Inserting Checksum and getting Session Token
-    public String generateAuthToken(String userId,String authCode) throws Exception {
-
-
+    public String generateAuthToken(String userId, String authCode) throws Exception {
         String checkSumToken = checkSum.getCheckSum(userId, authCode);
         System.out.println("Check Sum : " + checkSumToken);
         //Inserting Checksum and getting Session Token
@@ -75,65 +66,79 @@ public class AliceBlueServiceImpl implements AliceBlueService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public BorkerConfigRequest getBrokerDetails(
+            Long userId,
+            String brokerName) {
+
+        if (userId == null || userId <= 0) {
+            throw new IllegalArgumentException(
+                    "Valid TradingApp User ID is required"
+            );
+        }
+
+        if (brokerName == null || brokerName.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Broker Name is required"
+            );
+        }
+
+        BrokerConfigDTO entity = brokerRepo
+                .findByUserIdAndBrokerName(
+                        userId,
+                        brokerName.trim()
+                )
+                .orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "Broker configuration not found"
+                        )
+                );
+
+        BorkerConfigRequest response = new BorkerConfigRequest();
+        response.setBrokerName(entity.getBrokerName());
+        response.setClientId(entity.getClientId());
+        response.setAppKey(entity.getAppKey());
+        response.setAppSecret(entity.getAppSecret());
+        response.setAppId(entity.getAppId());
+        response.setUserId(entity.getUserId());
+
+        return response;
+    }
+
+    @Override
     @Transactional
     public String saveDetails(BorkerConfigRequest request) {
-
         // 1. Validate request
-        if (request == null) {
-            throw new IllegalArgumentException(
-                    "Broker configuration request cannot be null");
+        if (request==null) {
+            throw new IllegalArgumentException("Broker configuration request cannot be null");
         }
-
-        if (request.getBrokerName() == null
-                || request.getBrokerName().isBlank()) {
+        if (request.getBrokerName()==null || request.getBrokerName().isBlank()) {
             throw new IllegalArgumentException("Broker Name is required");
         }
-
-        if (request.getUserId() == null
-                || request.getUserId().isBlank()) {
+        if (request.getClientId()==null || request.getClientId().isBlank()) {
             throw new IllegalArgumentException("Client ID is required");
         }
-
-        if (request.getAppKey() == null
-                || request.getAppKey().isBlank()) {
+        if (request.getAppKey()==null || request.getAppKey().isBlank()) {
             throw new IllegalArgumentException("App Key is required");
         }
-
-        if (request.getAppSecret() == null
-                || request.getAppSecret().isBlank()) {
+        if (request.getAppSecret()==null || request.getAppSecret().isBlank()) {
             throw new IllegalArgumentException("API Secret is required");
         }
-
         // 2. Map request to entity
         BrokerConfigDTO entity = new BrokerConfigDTO();
-
         entity.setBrokerName(request.getBrokerName().trim());
-        entity.setClientId(request.getUserId().trim());
+        entity.setClientId(request.getClientId().trim());
         entity.setAppKey(request.getAppKey().trim());
         entity.setAppSecret(request.getAppSecret());
-        entity.setAppId(
-                request.getAppId() == null
-                        || request.getAppId().isBlank()
-                        ? null
-                        : request.getAppId().trim()
-        );
-
+        entity.setAppId(request.getAppId()==null || request.getAppId().isBlank() ? null:request.getAppId().trim());
         // 3. Update existing configuration
-        int updatedRows = brokerRepo.updateByClientIdAndAppKey(
-                entity.getBrokerName(),
-                entity.getAppSecret(),
-                entity.getAppId(),
-                entity.getClientId(),
-                entity.getAppKey()
-        );
-
+        int updatedRows = brokerRepo.updateByClientIdAndAppKey(entity.getBrokerName(), entity.getAppSecret(), entity.getAppId(), entity.getClientId(), entity.getAppKey());
         if (updatedRows > 0) {
             return "Broker configuration already updated.";
         }
-
         // 4. Insert new configuration if no matching record exists
         brokerRepo.save(entity);
-
         return "Broker configuration saved successfully.";
     }
 }

@@ -14,3 +14,7 @@ CREATE TABLE IF NOT EXISTS broker_config (
     UNIQUE KEY uk_broker_client (broker_name, client_id)
 ) ENGINE=InnoDB
   DEFAULT CHARSET=utf8mb4;
+
+
+  ALTER TABLE broker_config
+  ADD COLUMN user_id BIGINT NOT NULL;
