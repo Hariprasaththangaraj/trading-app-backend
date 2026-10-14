@@ -11,6 +11,7 @@ import com.trading.app.brokerConfig.websocket.AliceBlueWebSocket;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.util.UriUtils;
 
 import java.nio.charset.StandardCharsets;
@@ -47,10 +48,10 @@ public class AliceBlueServiceImpl implements AliceBlueService {
     }
 
     //Inserting Checksum and getting Session Token
-    public String generateAuthToken(String authCode) throws Exception {
+    public String generateAuthToken(String userId,String authCode) throws Exception {
 
 
-        String checkSumToken = checkSum.getCheckSum(brokerConfig.getUserId(), authCode, brokerConfig.getAppSecret());
+        String checkSumToken = checkSum.getCheckSum(userId, authCode);
         System.out.println("Check Sum : " + checkSumToken);
         //Inserting Checksum and getting Session Token
         String sessionToken = tokenService.getSession(checkSumToken);

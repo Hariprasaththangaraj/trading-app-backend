@@ -71,20 +71,12 @@ public class AliceBlueController {
      * @return redirect response to the frontend after authentication
      */
     @GetMapping("/callback")
-    public RedirectView callback(@RequestParam("authCode") String authCode) throws Exception {
-        // Print the received authentication code for debugging.
-        // TODO: Remove this log before production because authCode
-        // is a sensitive authentication value.
-        System.out.println("AUTH CODE = " + authCode);
-
-
+    public RedirectView callback(@RequestParam("userId") String userId, @RequestParam("authCode") String authCode) throws Exception {
         /*
          * Generate the AliceBlue authentication/session token
          * using the authCode received from the broker.
          */
-        String checkSumValue = aliceBlueService.generateAuthToken(authCode);
-
-
+        String checkSumValue = aliceBlueService.generateAuthToken(userId, authCode);
         /*
          * If token generation is successful,
          * redirect the user back to the frontend application.

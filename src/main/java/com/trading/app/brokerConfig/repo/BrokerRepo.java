@@ -29,4 +29,6 @@ public interface BrokerRepo
             @Param("clientId") String clientId,
             @Param("appKey") String appKey
     );
+
+    BrokerConfigDTO getByClientId(String userId);
 }

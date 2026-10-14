@@ -50,7 +50,7 @@ public class AliceBlueWebSocket {
             headers.setBearerAuth(aliceBlueSessionStore.getSessionToken());
         }
         HttpEntity<WebSocketDTO> requestEntity = new HttpEntity<>(entity, headers);
-        ResponseEntity<WebSocketSessionResponse> response = restTemplate.exchange(config.getBaseUrl() + Constant.WEBSOCKET_INVALIDATE_URL, HttpMethod.POST, requestEntity, WebSocketSessionResponse.class);
+        ResponseEntity<WebSocketSessionResponse> response = restTemplate.exchange(Constant.BASE_URL + Constant.WEBSOCKET_INVALIDATE_URL, HttpMethod.POST, requestEntity, WebSocketSessionResponse.class);
         // Calling Creating Web socket
         if (response.getStatusCode()==HttpStatus.OK) {
             createWebSocket();
@@ -70,7 +70,7 @@ public class AliceBlueWebSocket {
             headers.setBearerAuth(aliceBlueSessionStore.getSessionToken());
         }
         HttpEntity<WebSocketDTO> requestEntity = new HttpEntity<>(entity, headers);
-        ResponseEntity<WebSocketSessionResponse> rs = restTemplate.exchange(config.getBaseUrl() + Constant.WEBSOCKET_CREATE_URL, HttpMethod.POST, requestEntity, WebSocketSessionResponse.class);
+        ResponseEntity<WebSocketSessionResponse> rs = restTemplate.exchange(Constant.BASE_URL + Constant.WEBSOCKET_CREATE_URL, HttpMethod.POST, requestEntity, WebSocketSessionResponse.class);
         if (rs.getStatusCode()==HttpStatus.OK) {
             connectWebSocket();
         }
