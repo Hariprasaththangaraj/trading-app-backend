@@ -48,8 +48,8 @@ public class BrokerServiceImpl implements BrokerService {
     }
 
     //Inserting Checksum and getting Session Token
-    public String generateAuthToken(String userId, String authCode) throws Exception {
-        String checkSumToken = checkSum.getCheckSum(userId, authCode);
+    public String generateAuthToken(String clientId, String authCode) throws Exception {
+        String checkSumToken = checkSum.getCheckSum(clientId, authCode);
         System.out.println("Check Sum : " + checkSumToken);
         //Inserting Checksum and getting Session Token
         String sessionToken = tokenService.getSession(checkSumToken);
@@ -60,7 +60,7 @@ public class BrokerServiceImpl implements BrokerService {
         aliceBlueSessionStore.setSessionToken(sessionToken);
         //Triggering WebSocket
         if (aliceBlueSessionStore.getSessionToken()!=null) {
-            webSocket.getInvalidateExistingWebSocket();
+            webSocket.getInvalidateExistingWebSocket(clientId);
         }
         return sessionToken;
     }

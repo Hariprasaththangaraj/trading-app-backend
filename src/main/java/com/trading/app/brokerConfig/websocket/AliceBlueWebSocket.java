@@ -1,6 +1,7 @@
 package com.trading.app.brokerConfig.websocket;
 
 import com.trading.app.brokerConfig.model.BrokerConfig;
+import com.trading.app.brokerConfig.service.BrokerService;
 import com.trading.app.brokerConfig.service.impl.AliceBlueSessionStore;
 import com.trading.app.brokerConfig.util.CheckSum;
 import com.trading.app.brokerConfig.util.Constant;
@@ -33,17 +34,20 @@ public class AliceBlueWebSocket {
     @Autowired
     CheckSum checkSum;
 
+    private static String CLIENT_ID;
+
     public AliceBlueWebSocket(RestTemplate restTemplate, AliceBlueSessionStore aliceBlueSessionStore) {
         this.restTemplate = restTemplate;
         this.aliceBlueSessionStore = aliceBlueSessionStore;
-    }
+     }
 
     //Terminating or invalidating existing websocket
-    public void getInvalidateExistingWebSocket() {
+    public void getInvalidateExistingWebSocket(String clientId) {
         System.out.println("START : Invalidating Web Socket");
         WebSocketDTO entity = new WebSocketDTO();
         entity.setSource("API");
-        entity.setUserId(config.getUserId());
+        entity.setClientId(clientId);
+        CLIENT_ID = clientId;
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         if (aliceBlueSessionStore.getSessionToken()!=null) {
@@ -53,17 +57,17 @@ public class AliceBlueWebSocket {
         ResponseEntity<WebSocketSessionResponse> response = restTemplate.exchange(Constant.BASE_URL + Constant.WEBSOCKET_INVALIDATE_URL, HttpMethod.POST, requestEntity, WebSocketSessionResponse.class);
         // Calling Creating Web socket
         if (response.getStatusCode()==HttpStatus.OK) {
-            createWebSocket();
+            createWebSocket(clientId);
         }
         System.out.println("END : Invalidating Web Socket");
     }
 
     //Create Session
-    public void createWebSocket() {
+    public void createWebSocket(String clientId) {
         System.out.println("START : Creating Web Socket Session Create!!!");
         WebSocketDTO entity = new WebSocketDTO();
         entity.setSource("API");
-        entity.setUserId(config.getUserId());
+        entity.setClientId(clientId);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         if (aliceBlueSessionStore.getSessionToken()!=null) {
@@ -83,7 +87,7 @@ public class AliceBlueWebSocket {
         WebSocketConnectionRequest wSCRequest = new WebSocketConnectionRequest();
         //Create 2 time encrypted key
         String getTwiceSHAKey = getEncryptedKeyTwice();
-        String clientID = config.getUserId() + "_API";
+        String clientID = CLIENT_ID + "_API";
         wSCRequest.setSusertoken(getTwiceSHAKey);
         wSCRequest.setT("c");
         wSCRequest.setActid(clientID);
@@ -230,10 +234,8 @@ public class AliceBlueWebSocket {
             ClassPathResource resource = new ClassPathResource("subscriptions/subscription.json");
             // Read the JSON file content
             String payload = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-
             // Convert the JSON file into a JSON Array
             JsonNode root = jsonValue.readTree(payload);
-
             // Each element represents one subscription payload
             for (JsonNode payloadNode : root) {
                 // Convert one JSON object into a JSON string
