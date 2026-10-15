@@ -1,12 +1,9 @@
 package com.trading.app.brokerConfig.websocket.model;
 
-import org.springframework.beans.factory.annotation.Value;
-
 public class WebSocketDTO {
     private String source;
 
-    @Value("${user-id}")
-    private String userId;
+    private String clientId;
 
     public String getSource() {
         return source;
@@ -16,11 +13,11 @@ public class WebSocketDTO {
         this.source = source;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getClientId() {
+        return clientId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
     }
 }

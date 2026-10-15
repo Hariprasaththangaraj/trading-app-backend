@@ -1,6 +1,6 @@
 package com.trading.app.brokerConfig.aliceBlueConfig;
 
-import com.trading.app.brokerConfig.service.AliceBlueService;
+import com.trading.app.brokerConfig.service.BrokerService;
 import com.trading.app.brokerConfig.util.Constant;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,7 +25,7 @@ import org.springframework.web.servlet.view.RedirectView;
  * <p>
  * This controller only handles HTTP requests.
  * The actual AliceBlue authentication logic is handled by
- * {@link AliceBlueService}.
+ * {@link BrokerService}.
  */
 @RestController
 public class AliceBlueController {
@@ -36,15 +36,15 @@ public class AliceBlueController {
      * Constructor injection is used so that Spring can automatically
      * create and inject the AliceBlueService bean.
      */
-    private final AliceBlueService aliceBlueService;
+    private final BrokerService brokerService;
 
     /**
      * Creates the AliceBlueController.
      *
-     * @param aliceBlueService service used for AliceBlue authentication
+     * @param brokerService service used for AliceBlue authentication
      */
-    public AliceBlueController(AliceBlueService aliceBlueService) {
-        this.aliceBlueService = aliceBlueService;
+    public AliceBlueController(BrokerService brokerService) {
+        this.brokerService = brokerService;
     }
 
     /**
@@ -71,12 +71,12 @@ public class AliceBlueController {
      * @return redirect response to the frontend after authentication
      */
     @GetMapping("/callback")
-    public RedirectView callback(@RequestParam("userId") String userId, @RequestParam("authCode") String authCode,   @RequestParam("appcode") String appCode) throws Exception {
+    public RedirectView callback(@RequestParam("userId") String clientId, @RequestParam("authCode") String authCode,   @RequestParam("appcode") String appCode) throws Exception {
         /*
          * Generate the AliceBlue authentication/session token
          * using the authCode received from the broker.
          */
-        String checkSumValue = aliceBlueService.generateAuthToken(userId, authCode);
+        String checkSumValue = brokerService.generateAuthToken(clientId, authCode);
         /*
          * If token generation is successful,
          * redirect the user back to the frontend application.

@@ -1,7 +1,7 @@
 package com.trading.app.brokerConfig;
 
 import com.trading.app.brokerConfig.model.BorkerConfigRequest;
-import com.trading.app.brokerConfig.service.AliceBlueService;
+import com.trading.app.brokerConfig.service.BrokerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,21 +9,21 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/brokerConfig")
 public class BrokerConfigController {
     @Autowired
-    AliceBlueService aliceBlueService;
+    BrokerService brokerService;
 
     @PostMapping("/connection")
     public String getLoginDetails(@RequestBody BorkerConfigRequest borkerConfigRequest) throws Exception {
-        return aliceBlueService.brokerConnection(borkerConfigRequest);
+        return brokerService.brokerConnection(borkerConfigRequest);
     }
 
     @PostMapping("/save")
     public String saveDetails(@RequestBody BorkerConfigRequest borkerConfigRequest) {
-        return aliceBlueService.saveDetails(borkerConfigRequest);
+        return brokerService.saveDetails(borkerConfigRequest);
     }
 
     @GetMapping("/getBrokerDetails")
     public BorkerConfigRequest getBrokerDetails(@RequestParam("userId") Long userId,
             @RequestParam("brokerName") String brokerName) {
-        return aliceBlueService.getBrokerDetails(userId, brokerName);
+        return brokerService.getBrokerDetails(userId, brokerName);
     }
 }

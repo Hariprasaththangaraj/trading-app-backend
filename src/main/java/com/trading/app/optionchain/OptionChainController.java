@@ -1,6 +1,6 @@
 package com.trading.app.optionchain;
 
-import com.trading.app.brokerConfig.service.AliceBlueService;
+import com.trading.app.brokerConfig.service.BrokerService;
 import com.trading.app.optionchain.model.OptionChain;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class OptionChainController {
 
     @Autowired
-    AliceBlueService aliceBlueService;
+    BrokerService brokerService;
 
     @PostMapping("/getUnderlying")
     public ResponseEntity<OptionChain> getUnderLaying(@RequestBody  OptionChain optionChain) {

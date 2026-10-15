@@ -24,4 +24,6 @@ public interface BrokerRepo extends JpaRepository<BrokerConfigDTO, Long> {
     BrokerConfigDTO getByClientId(String userId);
 
     Optional<BrokerConfigDTO> findByUserIdAndBrokerName(Long userId, String brokerName);
+
+    Optional<BrokerConfigDTO> findByUserId(Long userId);
 }

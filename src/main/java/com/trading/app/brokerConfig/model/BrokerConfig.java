@@ -9,7 +9,7 @@ public class BrokerConfig {
 
     private String appKey;
     private String appSecret;
-    private String userId;
+    private String clientId;
     private String redirectUrl;
     private String authUrl;
     private String baseUrl;
@@ -48,12 +48,12 @@ public class BrokerConfig {
         this.appSecret = appSecret;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getClientId() {
+        return clientId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
     }
 
     public String getRedirectUrl() {

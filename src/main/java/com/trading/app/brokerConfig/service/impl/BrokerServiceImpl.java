@@ -4,7 +4,7 @@ import com.trading.app.brokerConfig.model.BorkerConfigRequest;
 import com.trading.app.brokerConfig.model.BrokerConfig;
 import com.trading.app.brokerConfig.model.BrokerConfigDTO;
 import com.trading.app.brokerConfig.repo.BrokerRepo;
-import com.trading.app.brokerConfig.service.AliceBlueService;
+import com.trading.app.brokerConfig.service.BrokerService;
 import com.trading.app.brokerConfig.util.CheckSum;
 import com.trading.app.brokerConfig.util.TokenService;
 import com.trading.app.brokerConfig.websocket.AliceBlueWebSocket;
@@ -18,7 +18,7 @@ import org.springframework.web.util.UriUtils;
 import java.nio.charset.StandardCharsets;
 
 @Service
-public class AliceBlueServiceImpl implements AliceBlueService {
+public class BrokerServiceImpl implements BrokerService {
     private final BrokerConfig brokerConfig;
     private final CheckSum checkSum;
     private final TokenService tokenService;
@@ -27,7 +27,7 @@ public class AliceBlueServiceImpl implements AliceBlueService {
     @Autowired
     private BrokerRepo brokerRepo;
 
-    public AliceBlueServiceImpl(BrokerConfig brokerConfig, CheckSum checkSum, TokenService tokenService,
+    public BrokerServiceImpl(BrokerConfig brokerConfig, CheckSum checkSum, TokenService tokenService,
             AliceBlueSessionStore aliceBlueSessionStore, AliceBlueWebSocket webSocket) {
         this.brokerConfig = brokerConfig;
         this.checkSum = checkSum;
@@ -67,34 +67,14 @@ public class AliceBlueServiceImpl implements AliceBlueService {
 
     @Override
     @Transactional(readOnly = true)
-    public BorkerConfigRequest getBrokerDetails(
-            Long userId,
-            String brokerName) {
-
-        if (userId == null || userId <= 0) {
-            throw new IllegalArgumentException(
-                    "Valid TradingApp User ID is required"
-            );
+    public BorkerConfigRequest getBrokerDetails(Long userId, String brokerName) {
+        if (userId==null || userId <= 0) {
+            throw new IllegalArgumentException("Valid TradingApp User ID is required");
         }
-
-        if (brokerName == null || brokerName.isBlank()) {
-            throw new IllegalArgumentException(
-                    "Broker Name is required"
-            );
+        if (brokerName==null || brokerName.isBlank()) {
+            throw new IllegalArgumentException("Broker Name is required");
         }
-
-        BrokerConfigDTO entity = brokerRepo
-                .findByUserIdAndBrokerName(
-                        userId,
-                        brokerName.trim()
-                )
-                .orElseThrow(() ->
-                        new ResponseStatusException(
-                                HttpStatus.NOT_FOUND,
-                                "Broker configuration not found"
-                        )
-                );
-
+        BrokerConfigDTO entity = brokerRepo.findByUserIdAndBrokerName(userId, brokerName.trim()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Broker configuration not found"));
         BorkerConfigRequest response = new BorkerConfigRequest();
         response.setBrokerName(entity.getBrokerName());
         response.setClientId(entity.getClientId());
@@ -102,7 +82,6 @@ public class AliceBlueServiceImpl implements AliceBlueService {
         response.setAppSecret(entity.getAppSecret());
         response.setAppId(entity.getAppId());
         response.setUserId(entity.getUserId());
-
         return response;
     }
 
@@ -140,5 +119,17 @@ public class AliceBlueServiceImpl implements AliceBlueService {
         // 4. Insert new configuration if no matching record exists
         brokerRepo.save(entity);
         return "Broker configuration saved successfully.";
+    }
+
+    @Transactional(readOnly = true)
+    public BorkerConfigRequest getBrokerDeatilsByUserId(Long userId) {
+        BrokerConfigDTO entity = brokerRepo.findByUserId(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Broker configuration not found"));
+        BorkerConfigRequest configRequest = new BorkerConfigRequest();
+        configRequest.setUserId(entity.getUserId());
+        configRequest.setBrokerName(entity.getBrokerName());
+        configRequest.setClientId(entity.getClientId());
+        configRequest.setAppId(entity.getAppId());
+        configRequest.setAppKey(entity.getAppKey());
+        return configRequest;
     }
 }
