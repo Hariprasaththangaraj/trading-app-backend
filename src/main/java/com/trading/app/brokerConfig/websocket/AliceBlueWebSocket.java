@@ -198,12 +198,12 @@ public class AliceBlueWebSocket {
                     // Convert the live JSON depth-feed response into
                     // our MarketDepthResponse Java object.
                     MarketDepthResponse depthResponse = jsonValue.readValue(response, MarketDepthResponse.class);
-                    System.out.println(">>> Market Depth Feed");
+//                    System.out.println(">>> Market Depth Feed");
                     // Display the latest traded price from the live feed.
                     System.out.println("LTP : " + depthResponse.getLastTradedPrice());
                     // Display the token to identify which instrument
                     // generated this live depth update.
-                    System.out.println("Token : " + depthResponse.getToken());
+//                    System.out.println("Token : " + depthResponse.getToken());
                 }
             } catch (Exception e) {
                 // If JSON parsing, object conversion, or any other
