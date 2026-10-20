@@ -9,6 +9,7 @@ import com.trading.app.brokerConfig.websocket.model.MarketDepthResponse;
 import com.trading.app.brokerConfig.websocket.model.WebSocketConnectionRequest;
 import com.trading.app.brokerConfig.websocket.model.WebSocketDTO;
 import com.trading.app.brokerConfig.websocket.model.WebSocketSessionResponse;
+import com.trading.app.datapublisher.impl.CommonMarketDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.*;
@@ -33,13 +34,16 @@ public class AliceBlueWebSocket {
     private final AliceBlueSessionStore aliceBlueSessionStore;
     @Autowired
     CheckSum checkSum;
+    private final CommonMarketDataService marketDataService;
 
     private static String CLIENT_ID;
 
-    public AliceBlueWebSocket(RestTemplate restTemplate, AliceBlueSessionStore aliceBlueSessionStore) {
+    public AliceBlueWebSocket(RestTemplate restTemplate, AliceBlueSessionStore aliceBlueSessionStore,
+            CommonMarketDataService marketDataService) {
         this.restTemplate = restTemplate;
         this.aliceBlueSessionStore = aliceBlueSessionStore;
-     }
+        this.marketDataService = marketDataService;
+    }
 
     //Terminating or invalidating existing websocket
     public void getInvalidateExistingWebSocket(String clientId) {
@@ -179,9 +183,11 @@ public class AliceBlueWebSocket {
                     System.out.println(">>> Market Depth Acknowledgement");
                     // Display the Last Traded Price received from AliceBlue.
                     System.out.println("LTP : " + depthResponse.getLastTradedPrice());
+                    //Getting data to supply other places
+                    marketDataService.publishMarketData(depthResponse);
                     // Display the instrument token so that we know
                     // which instrument this depth response belongs to.
-                    System.out.println("Token : " + depthResponse.getToken());
+//                    System.out.println("Token : " + depthResponse.getToken());
                 }
                 // =========================================================
                 // 3. LIVE DEPTH FEED
