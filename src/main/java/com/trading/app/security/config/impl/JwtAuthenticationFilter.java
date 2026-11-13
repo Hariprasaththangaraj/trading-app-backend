@@ -9,6 +9,8 @@ import org.springframework.security.authentication
         .UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -36,6 +38,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String token = authHeader.substring(7);
 
+        final Logger log = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
+
+
         try {
             String username = jwtService.extractUsername(token);
 
@@ -56,6 +61,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
         } catch (Exception e) {
+            log.error("JWT validation failed: {}", e.getMessage(), e);
             SecurityContextHolder.clearContext();
         }
 

@@ -127,7 +127,7 @@ public class AliceBlueWebSocket {
         protected void handleTextMessage(WebSocketSession session, TextMessage message) {
             // Get the actual JSON response received from AliceBlue.
             String response = message.getPayload();
-            System.out.println("AliceBlue Response = " + response);
+//            System.out.println("AliceBlue Response = " + response);
             try {
                 // Parse the received JSON response so that we can
                 // read individual fields such as "t", "s", "tk", etc.
@@ -206,11 +206,12 @@ public class AliceBlueWebSocket {
                     MarketDepthResponse depthResponse = jsonValue.readValue(response, MarketDepthResponse.class);
 //                    System.out.println(">>> Market Depth Feed");
                     // Display the latest traded price from the live feed.
-                    System.out.println("LTP : " + depthResponse.getLastTradedPrice());
                     // Display the token to identify which instrument
                     // generated this live depth update.
-//                    System.out.println("Token : " + depthResponse.getToken());
-                }
+                    System.out.println("Token : " + depthResponse.getToken() + " LTP : " + depthResponse.getLastTradedPrice());
+
+                    marketDataService.publishMarketData(depthResponse);
+                   }
             } catch (Exception e) {
                 // If JSON parsing, object conversion, or any other
                 // message-processing operation fails, we come here.
